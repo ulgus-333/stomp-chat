@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    active: local
+    group:
+      local: local-db, local-oauth2
+  application:
+    name: stomp-chat-service
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/chat
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
+            client-secret: ${OAUTH2_GOOGLE_SECRET_KEY}
+            scope:
+              - email
+              - profile
+server:
+  servlet:
+    context-path: /chat
+

@@ -1,4 +1,4 @@
-package com.practice.stomp.stompchatpractice;
+package com.practice.stomp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
