@@ -1,0 +1,52 @@
+package com.practice.stomp.domain.entity.user;
+
+import com.practice.stomp.domain.type.Role;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Table(name = "user")
+@NoArgsConstructor
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idx;
+
+    @Column(nullable = false, unique = true, length = 50, updatable = false)
+    private String email;
+
+    @Column(nullable = false, length = 50, updatable = false)
+    private String name;
+
+    @Column(length = 50)
+    private String nickname;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
+    public static User insert(String email, String name) {
+        return User.builder()
+                .email(email)
+                .name(name)
+                .role(Role.USER)
+                .build();
+    }
+
+    @Builder(access = AccessLevel.PRIVATE)
+    public User(Long idx, String email, String name, String nickname, Role role) {
+        this.idx = idx;
+        this.email = email;
+        this.name = name;
+        this.nickname = nickname;
+        this.role = role;
+    }
+
+    public String role() {
+        return role.getRole();
+    }
+}
