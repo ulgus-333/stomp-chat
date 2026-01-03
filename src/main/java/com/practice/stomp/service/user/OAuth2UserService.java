@@ -1,4 +1,4 @@
-package com.practice.stomp.service;
+package com.practice.stomp.service.user;
 
 import com.practice.stomp.domain.dto.CustomOAuth2User;
 import com.practice.stomp.domain.entity.user.User;
