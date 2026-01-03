@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Chat App</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <div class="navbar-right">
+                <div style="display: inline-block; vertical-align: middle; margin-right: 15px;">
+                    <table style="text-align: left;">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: right; padding-right: 5px;"><strong>Email:</strong></td>
+                                <td><span id="userEmail"></span></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: right; padding-right: 5px;"><strong>Nickname:</strong></td>
+                                <td><span id="userNickname"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="btn-group navbar-btn" role="group" style="display: inline-block; vertical-align: middle;">
+                    <button type="button" class="btn btn-default" id="myPageBtn" title="My Page">
+                        <span class="glyphicon glyphicon-user"></span> My Page
+                    </button>
+                    <button type="button" class="btn btn-default" id="logoutBtn" title="Logout">
+                        <span class="glyphicon glyphicon-log-out"></span> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Chat Room List (Left Column) -->
+        <div class="col-md-12" id="roomListColumn">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="flex-basis: 120px;">Chat Rooms</span>
+                    <div style="flex-grow: 1; text-align: center;">
+                        <button id="createRoomBtn" class="btn btn-primary btn-sm">Create Room</button>
+                    </div>
+                    <div style="flex-basis: 120px; text-align: right;">
+                        <button id="backToInitialView" class="btn btn-sm btn-default" style="display: none;">Back</button>
+                    </div>
+                </div>
+                <div id="chatRooms" class="panel-body">
+                    <!-- Chat rooms will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area (Right Column) -->
+        <div class="col-md-9" id="chatAreaColumn" style="display: none;">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <button id="leaveRoomBtn" class="btn btn-danger btn-sm">Leave Room</button>
+                    <span id="chatRoomName" class="panel-title" style="margin-left: 10px;"></span>
+                    <button id="hideChatBtn" class="btn btn-default btn-sm pull-right">Hide</button>
+                </div>
+                <div id="messages" class="panel-body" style="height: 400px; overflow-y: scroll;">
+                    <!-- Messages will appear here -->
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input type="text" id="message" class="form-control" placeholder="Enter your message">
+                        <span class="input-group-btn">
+                            <button id="send" class="btn btn-default" type="button">Send</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="stomp.js"></script>
+</body>
+</html>
