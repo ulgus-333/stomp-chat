@@ -17,7 +17,7 @@ public class UserRoomRelations {
     }
 
     private UserRoomRelations(List<UserRoomRelation> relations) {
-        if (!CollectionUtils.isEmpty(relations)) {
+        if (CollectionUtils.isEmpty(relations)) {
             return;
         }
         this.relations.addAll(relations);

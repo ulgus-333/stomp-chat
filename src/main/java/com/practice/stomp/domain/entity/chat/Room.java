@@ -21,6 +21,5 @@ public class Room {
     @Column(nullable = false)
     private LocalDateTime createAt;
 
-    @Column(nullable = false)
     private LocalDateTime lastMessagedAt;
 }

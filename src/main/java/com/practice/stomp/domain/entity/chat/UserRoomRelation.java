@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
-@Table(name = "message_room_relation")
+@Table(name = "user_room_relation")
 @NoArgsConstructor
 @Entity
 public class UserRoomRelation {
@@ -16,11 +16,11 @@ public class UserRoomRelation {
     @Id
     private Long idx;
 
-    @JoinColumn(name = "user_idx")
+    @JoinColumn(name = "user_idx", nullable = false)
     @ManyToOne
     private User user;
 
-    @JoinColumn(name = "room_idx")
+    @JoinColumn(name = "room_idx", nullable = false)
     @ManyToOne
     private Room room;
 
