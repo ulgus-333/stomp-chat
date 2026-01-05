@@ -2,6 +2,8 @@ package com.practice.stomp.domain.entity.chat;
 
 import com.practice.stomp.domain.entity.user.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,6 +28,21 @@ public class UserRoomRelation {
 
     @Column
     private Integer unreadMessageCount;
+
+    public static UserRoomRelation insert(User user, Room room) {
+        return UserRoomRelation.builder()
+                .user(user)
+                .room(room)
+                .build();
+    }
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private UserRoomRelation(Long idx, User user, Room room, Integer unreadMessageCount) {
+        this.idx = idx;
+        this.user = user;
+        this.room = room;
+        this.unreadMessageCount = unreadMessageCount;
+    }
 
     public Long roomIdx() {
         return this.room.getIdx();

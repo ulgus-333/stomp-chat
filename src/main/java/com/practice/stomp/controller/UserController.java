@@ -1,7 +1,7 @@
 package com.practice.stomp.controller;
 
 import com.practice.stomp.domain.dto.CustomOAuth2User;
-import com.practice.stomp.domain.request.UserSearchRequestDto;
+import com.practice.stomp.domain.request.user.UserSearchRequestDto;
 import com.practice.stomp.domain.response.user.UserDetailResponseDto;
 import com.practice.stomp.domain.response.user.UserDetailsResponseDto;
 import com.practice.stomp.service.user.UserService;
