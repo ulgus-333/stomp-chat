@@ -2,6 +2,8 @@ package com.practice.stomp.domain.entity.chat;
 
 import com.practice.stomp.domain.entity.user.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,4 +31,22 @@ public class Message {
 
     @Column(nullable = false)
     private LocalDateTime createAt;
+
+    public static Message insert(String message, User user, Room room, LocalDateTime createAt) {
+        return Message.builder()
+                .message(message)
+                .user(user)
+                .room(room)
+                .createAt(createAt)
+                .build();
+    }
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private Message(Long idx, String message, User user, Room room, LocalDateTime createAt) {
+        this.idx = idx;
+        this.message = message;
+        this.user = user;
+        this.room = room;
+        this.createAt = createAt;
+    }
 }

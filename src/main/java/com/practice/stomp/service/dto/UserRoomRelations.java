@@ -36,7 +36,7 @@ public class UserRoomRelations {
                         Collectors.mapping(UserRoomRelation::userName, Collectors.toList())));
     }
 
-    public Stream<UserRoomRelation> stream() {
-        return this.relations.stream();
+    public void increaseUnreadCount() {
+        this.relations.forEach(UserRoomRelation::increaseUnreadMessageCount);
     }
 }
