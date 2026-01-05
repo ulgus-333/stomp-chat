@@ -13,7 +13,7 @@ public class CipherUtils {
     public static String encrypt(String plainText) {
         try {
             Cipher cipher =  Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(mysqlAes128Key(), "AES"));
+            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(aes128Key(), "AES"));
 
             byte[] encrypted = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
 
@@ -27,7 +27,7 @@ public class CipherUtils {
     public static String decrypt(String encryptedHex) {
         try {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(mysqlAes128Key(), "AES"));
+            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(aes128Key(), "AES"));
 
             byte[] decrypted = cipher.doFinal(hexToBytes(encryptedHex));
 
@@ -37,7 +37,7 @@ public class CipherUtils {
         }
     }
 
-    private static byte[] mysqlAes128Key() throws Exception {
+    private static byte[] aes128Key() throws Exception {
         byte[] sha512 = MessageDigest.getInstance("SHA-512")
                 .digest(CipherProperties.seed().getBytes(StandardCharsets.UTF_8));
 

@@ -5,6 +5,7 @@
     <title>Chat</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
 </head>
@@ -86,6 +87,72 @@
         </div>
     </div>
 </div>
+
+<!-- Create Chat Room Modal -->
+<div class="modal fade" id="createRoomModal" tabindex="-1" role="dialog" aria-labelledby="createRoomModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- User Search Step -->
+            <div id="user-search-step">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Create Chat Room: Select User</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-offset-1 col-xs-10">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="user-search-input-name" class="control-label col-xs-4">이름:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control" id="user-search-input-name" placeholder="Enter name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="user-search-input-email" class="control-label col-xs-4">이메일:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control" id="user-search-input-email" placeholder="Enter email">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-offset-4 col-xs-8 text-right">
+                                        <button class="btn btn-primary" type="button" id="user-search-btn">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="user-search-results">
+                        <!-- Search results will be appended here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+            <!-- Room Title Step -->
+            <div id="room-title-step" style="display: none;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Create Chat Room: Set Title</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="room-title-input">Room Title</label>
+                        <input type="text" class="form-control" id="room-title-input" placeholder="Enter room title (optional)">
+                        <p class="help-block">If you leave this blank, the room title will be the participant's name.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="back-to-search-btn">Back</button>
+                    <button type="button" class="btn btn-primary" id="create-room-confirm-btn">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="stomp.js"></script>
 </body>
 </html>

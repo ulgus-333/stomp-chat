@@ -30,9 +30,6 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    @Transient
-    private String decryptName;
-
     public static User insert(String email, String name) {
         return User.builder()
                 .email(email)
@@ -48,10 +45,13 @@ public class User {
         this.name = name;
         this.nickname = nickname;
         this.role = role;
-        this.decryptName = CipherUtils.decrypt(name);
     }
 
     public String role() {
         return role.getRole();
+    }
+
+    public String decryptName() {
+        return CipherUtils.decrypt(this.name);
     }
 }

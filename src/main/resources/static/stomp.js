@@ -2,6 +2,7 @@ let stompClient = null;
 let userIdx = null;
 let userNickname = null;
 let currentRoomIdx = null;
+let selectedUser = null;
 
 $(document).ready(function() {
     // Fetch user info first, then fetch chat rooms
@@ -25,6 +26,21 @@ $(document).ready(function() {
     $("#logoutBtn").on("click", () => { window.location.href = "/logout"; });
     $("#myPageBtn").on("click", () => { window.location.href = "/mypage"; });
 
+    // Modal-related event listeners
+    $("#user-search-btn").on("click", searchUsers);
+    $("#back-to-search-btn").on("click", backToSearchStep);
+    $("#create-room-confirm-btn").on("click", createRoomConfirm);
+
+    $('#user-search-results').on('click', '.list-group-item', function() {
+        selectedUser = {
+            idx: $(this).data('user-idx'),
+            name: $(this).data('user-name')
+        };
+        $("#user-search-step").hide();
+        $("#room-title-step").show();
+    });
+
+
     // Use event delegation for dynamically added room items
     $("#chatRooms").on("click", ".list-group-item", function(e) {
         e.preventDefault();
@@ -35,15 +51,97 @@ $(document).ready(function() {
 });
 
 function createRoom() {
-    const roomName = prompt("Enter the name for the new chat room:");
-    if (roomName) {
-        // Here you would typically make an API call to create the room
-        console.log("Creating room: " + roomName);
-        alert("Room creation functionality is not yet implemented.");
-        // After successful API call, you would add the room to the list:
-        // const newRoom = { roomIdx: new Date().getTime(), roomName: roomName };
-        // addRoomToList(newRoom);
+    // Show the modal and reset it
+    $('#createRoomModal').modal('show');
+    backToSearchStep();
+    $('#user-search-input-name').val('');
+    $('#user-search-input-email').val('');
+    $('#user-search-results').empty();
+    $('#room-title-input').val('');
+}
+
+function backToSearchStep() {
+    $("#room-title-step").hide();
+    $("#user-search-step").show();
+    selectedUser = null;
+}
+
+function searchUsers() {
+    const name = $("#user-search-input-name").val();
+    const email = $("#user-search-input-email").val();
+
+    if (!name && !email) {
+        return;
     }
+
+    const searchData = {
+        size: 10
+    };
+
+    if (name) {
+        searchData.name = name;
+    }
+    if (email) {
+        searchData.email = email;
+    }
+
+    $.get("/user/search", searchData)
+        .done(function(response) {
+            const resultsContainer = $("#user-search-results");
+            resultsContainer.empty();
+            if (response && response.users && response.users.content && response.users.content.length > 0) {
+                const resultList = $("<div>").addClass("list-group");
+                response.users.content.forEach(function(user) {
+                    // Don't show the current user in the search results
+                    if (user.idx === userIdx) {
+                        return;
+                    }
+                    const userItem = $("<a>")
+                        .addClass("list-group-item list-group-item-action")
+                        .attr("href", "#")
+                        .data("user-idx", user.idx)
+                        .data("user-name", user.nickname || user.name)
+                        .text((user.nickname || user.name) + ' (' + user.email + ')');
+                    resultList.append(userItem);
+                });
+                resultsContainer.append(resultList);
+            } else {
+                resultsContainer.text("No users found.");
+            }
+        })
+        .fail(function() {
+            $("#user-search-results").text("Error searching for users.");
+        });
+}
+
+function createRoomConfirm() {
+    if (!selectedUser) {
+        alert("Please select a user.");
+        return;
+    }
+
+    const roomTitle = $("#room-title-input").val();
+
+    const requestData = {
+        title: roomTitle,
+        invitedUserIdx: selectedUser.idx
+    };
+
+    $.ajax({
+        url: "/chats/room",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(requestData),
+        success: function(response) {
+            $('#createRoomModal').modal('hide');
+            fetchChatRoomsAndDisplay();
+            // Optionally, connect to the new room immediately
+            // connectToRoom(response.idx, response.title);
+        },
+        error: function() {
+            alert("Error creating chat room.");
+        }
+    });
 }
 
 function fetchChatRoomsAndDisplay() {
@@ -72,30 +170,26 @@ function addRoomToList(room, roomListContainer) {
         .data("room-idx", room.idx)
         .data("room-name", roomName);
 
-    const titleH5 = $("<h5>").addClass("mb-1")
-        .append($("<span>").text(roomTitle).css("margin-right", "5px"))
-
+    const titleAndParticipantsDiv = $("<div>");
+    const titleH5 = $("<h5>").addClass("mb-1").text(roomTitle);
     if (room.unreadMessageCount > 0) {
-        titleH5.append($("<span>").addClass("badge badge-danger badge-pill mr-2").text(room.unreadMessageCount))
+        titleH5.append($("<span>").addClass("badge badge-danger badge-pill ml-2").text(room.unreadMessageCount));
     }
+    titleAndParticipantsDiv.append(titleH5);
+    titleAndParticipantsDiv.append($("<small>").text(room.users.length + " participants"));
 
-    const titleDiv = $("<div>")
-        .append(titleH5)
-        .append($("<small>").text(room.users.length + " participants"));
-
-    const infoDiv = $("<div>").addClass("text-right");
-
+    const timeSmall = $("<small>");
     if (room.lastMessagedAt) {
-        infoDiv.append($("<small>").text(new Date(room.lastMessagedAt).toLocaleTimeString()));
+        timeSmall.text(new Date(room.lastMessagedAt).toLocaleTimeString());
     }
 
-    roomItem.append(titleDiv);
-    roomItem.append(infoDiv);
+    roomItem.append(titleAndParticipantsDiv);
+    roomItem.append(timeSmall);
+
 
     if (roomListContainer) {
         roomListContainer.append(roomItem);
     } else {
-        // If a container isn't provided, find the existing one or create it.
         let container = $("#chatRooms .list-group");
         if (container.length === 0) {
             container = $("<div>").addClass("list-group");
@@ -115,20 +209,19 @@ function connectToRoom(roomIdx, roomName) {
 
     const socket = new SockJS('/stomp/chats');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
+    stompClient.connect({}, function(frame) {
         console.log('Connected: ' + frame);
         currentRoomIdx = roomIdx;
         $("#chatRoomName").text(roomName);
 
-        stompClient.subscribe('/sub/chat/room/' + currentRoomIdx, function (message) {
+        stompClient.subscribe('/sub/chat/room/' + currentRoomIdx, function(message) {
             showMessage(JSON.parse(message.body));
         });
 
-        // Update UI
         $("#roomListColumn").removeClass("col-md-12").addClass("col-md-3");
         $("#chatAreaColumn").show();
         $("#backToInitialView").show();
-        $("#messages").empty(); // Clear previous messages
+        $("#messages").empty();
     });
 }
 
@@ -162,10 +255,8 @@ function sendMessage() {
 }
 
 function showMessage(message) {
-    // Assuming the message object has a senderNickname and a message field
     const sender = message.senderNickname || 'Unknown';
     const msg = message.message || '';
     $("#messages").append("<div><strong>" + sender + ":</strong> " + msg + "</div>");
-    // Scroll to the bottom of the messages panel
     $("#messages").scrollTop($("#messages")[0].scrollHeight);
 }
