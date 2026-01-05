@@ -49,7 +49,7 @@ public class UserRoomRelation {
     }
 
     public String userName() {
-        return this.user.getName();
+        return this.user.decryptName();
     }
 
     public LocalDateTime lastMessagedAt() {

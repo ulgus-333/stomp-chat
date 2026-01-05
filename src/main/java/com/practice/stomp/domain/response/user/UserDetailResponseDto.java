@@ -12,7 +12,7 @@ public record UserDetailResponseDto (
         return new UserDetailResponseDto(
                 user.getIdx(),
                 user.getEmail(),
-                user.getDecryptName(),
+                user.decryptName(),
                 user.getNickname()
         );
     }
