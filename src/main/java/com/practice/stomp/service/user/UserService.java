@@ -2,7 +2,7 @@ package com.practice.stomp.service.user;
 
 import com.practice.stomp.domain.dao.user.UserSearchDao;
 import com.practice.stomp.domain.entity.user.User;
-import com.practice.stomp.domain.request.UserSearchRequestDto;
+import com.practice.stomp.domain.request.user.UserSearchRequestDto;
 import com.practice.stomp.domain.response.user.UserDetailResponseDto;
 import com.practice.stomp.domain.response.user.UserDetailsResponseDto;
 import com.practice.stomp.repository.UserRepository;
@@ -20,10 +20,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserQueryDslRepository userQueryDslRepository;
 
-    public UserDetailResponseDto findUserDetail(Long userIdx) {
+    public User findUserByIdx(Long userIdx) {
         return userRepository.findById(userIdx)
-                .map(UserDetailResponseDto::from)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatusCode.valueOf(404)));
+    }
+
+    public UserDetailResponseDto findUserDetail(Long userIdx) {
+        return UserDetailResponseDto.from(findUserByIdx(userIdx));
     }
 
     public UserDetailsResponseDto searchUserDetail(Long requestUserIdx, UserSearchRequestDto requestDto, Pageable pageable) {

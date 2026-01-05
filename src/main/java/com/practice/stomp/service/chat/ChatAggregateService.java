@@ -1,6 +1,10 @@
 package com.practice.stomp.service.chat;
 
+import com.practice.stomp.domain.dto.CustomOAuth2User;
+import com.practice.stomp.domain.entity.chat.Room;
 import com.practice.stomp.domain.entity.chat.UserRoomRelation;
+import com.practice.stomp.domain.entity.user.User;
+import com.practice.stomp.domain.response.chat.ChatRoomResponseDto;
 import com.practice.stomp.domain.response.chat.ChatRoomsResponseDto;
 import com.practice.stomp.service.dto.UserRoomRelations;
 import com.practice.stomp.service.message.MessageService;
@@ -12,8 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -33,5 +39,21 @@ public class ChatAggregateService {
         Map<Long, List<String>> mapper = roomRelations.roomIdxUserNamesMapper();
 
         return ChatRoomsResponseDto.of(relationPage, mapper);
+    }
+
+    @Transactional
+    public ChatRoomResponseDto createChatRoom(CustomOAuth2User requestUser, User targetUser, String roomTitle, LocalDateTime requestDatetime) {
+        Room newRoom = roomService.insert(Room.insert(roomTitle, requestDatetime));
+
+        List<UserRoomRelation> relations = Stream.of(requestUser.user(), targetUser)
+                .map(user -> UserRoomRelation.insert(user, newRoom))
+                .toList();
+
+        UserRoomRelation myRelation = userRoomRelationService.insertAll(relations).stream()
+                .filter(relation -> relation.getUser().getIdx().equals(requestUser.userIdx()))
+                .findFirst()
+                .orElseThrow();
+
+        return ChatRoomResponseDto.of(myRelation, List.of(requestUser.user().getName(), targetUser.getName()));
     }
 }

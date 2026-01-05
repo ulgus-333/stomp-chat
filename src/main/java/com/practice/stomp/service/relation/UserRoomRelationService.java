@@ -15,6 +15,14 @@ import java.util.List;
 public class UserRoomRelationService {
     private final UserRoomRelationRepository userRoomRelationRepository;
 
+    public UserRoomRelation insert(UserRoomRelation userRoomRelation) {
+        return userRoomRelationRepository.save(userRoomRelation);
+    }
+
+    public List<UserRoomRelation> insertAll(List<UserRoomRelation> userRoomRelations) {
+        return userRoomRelationRepository.saveAll(userRoomRelations);
+    }
+
     public Page<UserRoomRelation> findPagedUserRoomRelationByUserIdx(Long userIdx, Pageable pageable) {
         return userRoomRelationRepository.findAllByUserIdx(userIdx, pageable);
     }

@@ -1,4 +1,4 @@
-package com.practice.stomp.domain.request;
+package com.practice.stomp.domain.request.user;
 
 import com.practice.stomp.domain.dao.user.UserSearchDao;
 import com.practice.stomp.utils.CipherUtils;
