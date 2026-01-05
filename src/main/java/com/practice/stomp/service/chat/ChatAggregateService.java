@@ -1,7 +1,7 @@
 package com.practice.stomp.service.chat;
 
 import com.practice.stomp.domain.entity.chat.UserRoomRelation;
-import com.practice.stomp.domain.response.ChatRoomsResponseDto;
+import com.practice.stomp.domain.response.chat.ChatRoomsResponseDto;
 import com.practice.stomp.service.dto.UserRoomRelations;
 import com.practice.stomp.service.message.MessageService;
 import com.practice.stomp.service.relation.UserRoomRelationService;

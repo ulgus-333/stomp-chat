@@ -1,4 +1,4 @@
-package com.practice.stomp.domain.response;
+package com.practice.stomp.domain.response.chat;
 
 import com.practice.stomp.domain.entity.chat.UserRoomRelation;
 

@@ -1,7 +1,7 @@
 package com.practice.stomp.controller;
 
 import com.practice.stomp.domain.dto.CustomOAuth2User;
-import com.practice.stomp.domain.response.ChatRoomsResponseDto;
+import com.practice.stomp.domain.response.chat.ChatRoomsResponseDto;
 import com.practice.stomp.service.chat.ChatAggregateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
