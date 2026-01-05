@@ -202,32 +202,59 @@ function addRoomToList(room, roomListContainer) {
 
 function connectToRoom(roomIdx, roomName) {
     if (stompClient) {
-        stompClient.disconnect(() => {
-            console.log("Disconnected from previous room.");
-        });
+        stompClient.deactivate();
     }
 
-    const socket = new SockJS('/stomp/chats');
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function(frame) {
-        console.log('Connected: ' + frame);
-        currentRoomIdx = roomIdx;
-        $("#chatRoomName").text(roomName);
+    stompClient = new StompJs.Client({
+        brokerURL: 'ws://' + window.location.host + '/stomp/chats',
+        onConnect: (frame) => {
+            console.log('Connected: ' + frame);
+            currentRoomIdx = roomIdx;
+            $("#chatRoomName").text(roomName);
 
-        stompClient.subscribe('/sub/chat/room/' + currentRoomIdx, function(message) {
-            showMessage(JSON.parse(message.body));
-        });
+            stompClient.subscribe('/sub/chats/' + currentRoomIdx, (message) => {
+                showMessage(JSON.parse(message.body));
+            });
 
-        $("#roomListColumn").removeClass("col-md-12").addClass("col-md-3");
-        $("#chatAreaColumn").show();
-        $("#backToInitialView").show();
-        $("#messages").empty();
+            fetchPreviousMessages(currentRoomIdx);
+
+            $("#roomListColumn").removeClass("col-md-12").addClass("col-md-3");
+            $("#chatAreaColumn").show();
+            $("#backToInitialView").show();
+        },
+        onStompError: (frame) => {
+            console.error('Broker reported error: ' + frame.headers['message']);
+            console.error('Additional details: ' + frame.body);
+        }
     });
+
+    stompClient.activate();
+}
+
+function fetchPreviousMessages(roomIdx) {
+    const messagesContainer = $("#messages");
+    messagesContainer.empty(); // Clear previous messages
+
+    // The API is not yet implemented, so this is a placeholder.
+    // When the API is ready, it should return a list of message objects.
+    $.get("/chats/messages", { roomIdx: roomIdx })
+        .done(function(response) {
+            // Assuming response is an array of message objects
+            if (response && Array.isArray(response)) {
+                response.forEach(function(message) {
+                    showMessage(message);
+                });
+            }
+        })
+        .fail(function() {
+            // You can add some error handling here if you want
+            console.log("Could not fetch previous messages. The API might not be ready yet.");
+        });
 }
 
 function disconnect() {
     if (stompClient !== null) {
-        stompClient.disconnect();
+        stompClient.deactivate();
     }
     stompClient = null;
     currentRoomIdx = null;
@@ -245,11 +272,13 @@ function sendMessage() {
     const messageContent = $("#message").val();
     if (messageContent && stompClient && currentRoomIdx) {
         const chatMessage = {
-            'roomIdx': currentRoomIdx,
-            'userIdx': userIdx,
-            'message': messageContent
+            type: 'TEXT',
+            message: messageContent
         };
-        stompClient.send("/pub/chat/message", {}, JSON.stringify(chatMessage));
+        stompClient.publish({
+            destination: "/pub/chats/" + currentRoomIdx,
+            body: JSON.stringify(chatMessage)
+        });
         $("#message").val("");
     }
 }

@@ -1,6 +1,8 @@
 package com.practice.stomp.service.chat;
 
 import com.practice.stomp.domain.dto.CustomOAuth2User;
+import com.practice.stomp.domain.dto.MessagePayloadDto;
+import com.practice.stomp.domain.entity.chat.Message;
 import com.practice.stomp.domain.entity.chat.Room;
 import com.practice.stomp.domain.entity.chat.UserRoomRelation;
 import com.practice.stomp.domain.entity.user.User;
@@ -55,5 +57,18 @@ public class ChatAggregateService {
                 .orElseThrow();
 
         return ChatRoomResponseDto.of(myRelation, List.of(requestUser.user().getName(), targetUser.getName()));
+    }
+
+    @Transactional
+    public MessagePayloadDto insertMessage(CustomOAuth2User requestUser, Long roomIdx, MessagePayloadDto messagePayloadDto, LocalDateTime messagedAt) {
+        Room room = roomService.findByIdx(roomIdx);
+
+        Message message = messageService.insert(Message.insert(messagePayloadDto.message(), requestUser.user(), room, messagedAt));
+        UserRoomRelations targetRelations = userRoomRelationService.findUserRoomRelationByRoomIdxAndNotUserIdx(roomIdx, requestUser.userIdx());
+        targetRelations.increaseUnreadCount();
+
+        room.updateLastMessagedAt(messagedAt);
+
+        return MessagePayloadDto.chat(requestUser.user().decryptName(), message.getMessage());
     }
 }

@@ -39,4 +39,8 @@ public class Room {
         this.createAt = createAt;
         this.lastMessagedAt = lastMessagedAt;
     }
+
+    public void updateLastMessagedAt(LocalDateTime lastMessagedAt) {
+        this.lastMessagedAt = lastMessagedAt;
+    }
 }

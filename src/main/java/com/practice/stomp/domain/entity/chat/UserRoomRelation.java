@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -26,13 +27,15 @@ public class UserRoomRelation {
     @ManyToOne
     private Room room;
 
-    @Column
+    @Column(nullable = false)
+    @ColumnDefault(value = "0")
     private Integer unreadMessageCount;
 
     public static UserRoomRelation insert(User user, Room room) {
         return UserRoomRelation.builder()
                 .user(user)
                 .room(room)
+                .unreadMessageCount(0)
                 .build();
     }
 
@@ -54,5 +57,13 @@ public class UserRoomRelation {
 
     public LocalDateTime lastMessagedAt() {
         return this.room.getLastMessagedAt();
+    }
+
+    public void increaseUnreadMessageCount() {
+        if (this.unreadMessageCount == null) {
+            this.unreadMessageCount = 1;
+        } else {
+            this.unreadMessageCount++;
+        }
     }
 }
