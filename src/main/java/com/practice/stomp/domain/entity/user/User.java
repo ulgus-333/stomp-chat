@@ -1,6 +1,7 @@
 package com.practice.stomp.domain.entity.user;
 
 import com.practice.stomp.domain.type.Role;
+import com.practice.stomp.utils.CipherUtils;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,10 +30,13 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Transient
+    private String decryptName;
+
     public static User insert(String email, String name) {
         return User.builder()
                 .email(email)
-                .name(name)
+                .name(CipherUtils.encrypt(name))
                 .role(Role.USER)
                 .build();
     }
@@ -44,6 +48,7 @@ public class User {
         this.name = name;
         this.nickname = nickname;
         this.role = role;
+        this.decryptName = CipherUtils.decrypt(name);
     }
 
     public String role() {

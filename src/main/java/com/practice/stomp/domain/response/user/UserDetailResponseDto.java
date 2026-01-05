@@ -1,4 +1,4 @@
-package com.practice.stomp.domain.response;
+package com.practice.stomp.domain.response.user;
 
 import com.practice.stomp.domain.entity.user.User;
 
@@ -12,7 +12,7 @@ public record UserDetailResponseDto (
         return new UserDetailResponseDto(
                 user.getIdx(),
                 user.getEmail(),
-                user.getName(),
+                user.getDecryptName(),
                 user.getNickname()
         );
     }
