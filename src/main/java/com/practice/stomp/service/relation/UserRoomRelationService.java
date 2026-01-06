@@ -36,6 +36,10 @@ public class UserRoomRelationService {
         return UserRoomRelations.from(userRoomRelationRepository.findAllByRoom_IdxIn(relations.roomIdxes()));
     }
 
+    public UserRoomRelations findUserRoomRelationsByRoomIdx(Long roomIdx) {
+        return UserRoomRelations.from(userRoomRelationRepository.findAllByRoom_Idx(roomIdx));
+    }
+
     @Transactional
     public UserRoomRelations findUserRoomRelationByRoomIdxAndNotUserIdx(Long roomIdx, Long userIdx) {
         return UserRoomRelations.from(userRoomRelationRepository.findAllByRoom_IdxAndUserIdxNot(roomIdx, userIdx));

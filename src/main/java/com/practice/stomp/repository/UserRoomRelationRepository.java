@@ -13,4 +13,5 @@ public interface UserRoomRelationRepository extends JpaRepository<UserRoomRelati
     List<UserRoomRelation> findAllByRoom_IdxIn(List<Long> roomIdxes);
     List<UserRoomRelation> findAllByRoom_IdxAndUserIdxNot(Long roomIdx,Long userIdx);
 
+    List<UserRoomRelation> findAllByRoom_Idx(Long roomIdx);
 }

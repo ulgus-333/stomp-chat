@@ -39,4 +39,9 @@ public class UserRoomRelations {
     public void increaseUnreadCount() {
         this.relations.forEach(UserRoomRelation::increaseUnreadMessageCount);
     }
+
+    public boolean containUser(Long userIdx) {
+        return this.relations.stream()
+                .anyMatch(relation -> relation.getUser().getIdx().equals(userIdx));
+    }
 }

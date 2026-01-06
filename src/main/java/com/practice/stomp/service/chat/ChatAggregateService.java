@@ -8,6 +8,7 @@ import com.practice.stomp.domain.entity.chat.UserRoomRelation;
 import com.practice.stomp.domain.entity.user.User;
 import com.practice.stomp.domain.response.chat.ChatRoomResponseDto;
 import com.practice.stomp.domain.response.chat.ChatRoomsResponseDto;
+import com.practice.stomp.domain.response.chat.MessagesResponseDto;
 import com.practice.stomp.service.dto.UserRoomRelations;
 import com.practice.stomp.service.message.MessageService;
 import com.practice.stomp.service.relation.UserRoomRelationService;
@@ -15,8 +16,10 @@ import com.practice.stomp.service.room.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,5 +73,17 @@ public class ChatAggregateService {
         room.updateLastMessagedAt(messagedAt);
 
         return MessagePayloadDto.chat(requestUser.user().decryptName(), message.getMessage());
+    }
+
+    public MessagesResponseDto getRoomMessages(CustomOAuth2User requestUser, Long roomIdx, Pageable pageable) {
+        UserRoomRelations relation = userRoomRelationService.findUserRoomRelationsByRoomIdx(roomIdx);
+
+        if (!relation.containUser(requestUser.userIdx())) {
+            throw new HttpClientErrorException(HttpStatusCode.valueOf(400));
+        }
+
+        Page<Message> messages = messageService.findMessagesByRoomIdx(roomIdx, pageable);
+
+        return MessagesResponseDto.from(messages);
     }
 }
