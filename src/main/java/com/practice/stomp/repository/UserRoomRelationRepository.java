@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRoomRelationRepository extends JpaRepository<UserRoomRelation, Long> {
     Page<UserRoomRelation> findAllByUserIdx(Long idx, Pageable pageable);
@@ -14,4 +15,6 @@ public interface UserRoomRelationRepository extends JpaRepository<UserRoomRelati
     List<UserRoomRelation> findAllByRoom_IdxAndUserIdxNot(Long roomIdx,Long userIdx);
 
     List<UserRoomRelation> findAllByRoom_Idx(Long roomIdx);
+
+    Optional<UserRoomRelation> findByRoomIdxAndUserIdx(Long roomIdx, Long userIdx);
 }
