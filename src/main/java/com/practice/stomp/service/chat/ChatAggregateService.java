@@ -8,6 +8,7 @@ import com.practice.stomp.domain.entity.chat.UserRoomRelation;
 import com.practice.stomp.domain.entity.user.User;
 import com.practice.stomp.domain.response.chat.ChatRoomResponseDto;
 import com.practice.stomp.domain.response.chat.ChatRoomsResponseDto;
+import com.practice.stomp.domain.response.chat.MessageResponseDto;
 import com.practice.stomp.domain.response.chat.MessagesResponseDto;
 import com.practice.stomp.service.dto.UserRoomRelations;
 import com.practice.stomp.service.message.MessageService;
@@ -63,7 +64,7 @@ public class ChatAggregateService {
     }
 
     @Transactional
-    public MessagePayloadDto insertMessage(CustomOAuth2User requestUser, Long roomIdx, MessagePayloadDto messagePayloadDto, LocalDateTime messagedAt) {
+    public MessageResponseDto insertMessage(CustomOAuth2User requestUser, Long roomIdx, MessagePayloadDto messagePayloadDto, LocalDateTime messagedAt) {
         Room room = roomService.findByIdx(roomIdx);
 
         Message message = messageService.insert(Message.insert(messagePayloadDto.message(), requestUser.user(), room, messagedAt));
@@ -71,8 +72,7 @@ public class ChatAggregateService {
         targetRelations.increaseUnreadCount();
 
         room.updateLastMessagedAt(messagedAt);
-
-        return MessagePayloadDto.chat(requestUser.user().decryptName(), message.getMessage());
+        return MessageResponseDto.from(message);
     }
 
     public MessagesResponseDto getRoomMessages(CustomOAuth2User requestUser, Long roomIdx, Pageable pageable) {
