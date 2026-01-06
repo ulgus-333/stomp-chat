@@ -6,8 +6,10 @@ import com.practice.stomp.service.dto.UserRoomRelations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
@@ -43,5 +45,10 @@ public class UserRoomRelationService {
     @Transactional
     public UserRoomRelations findUserRoomRelationByRoomIdxAndNotUserIdx(Long roomIdx, Long userIdx) {
         return UserRoomRelations.from(userRoomRelationRepository.findAllByRoom_IdxAndUserIdxNot(roomIdx, userIdx));
+    }
+
+    public UserRoomRelation findUserRoomRelationByRoomIdxAndUserIdx(Long roomIdx, Long userIdx) {
+        return userRoomRelationRepository.findByRoomIdxAndUserIdx(roomIdx, userIdx)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatusCode.valueOf(404)));
     }
 }

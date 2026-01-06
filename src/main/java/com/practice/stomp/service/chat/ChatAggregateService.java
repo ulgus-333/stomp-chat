@@ -86,4 +86,10 @@ public class ChatAggregateService {
 
         return MessagesResponseDto.from(messages);
     }
+
+    @Transactional
+    public void resetUnreadCount(CustomOAuth2User requestUser, Long roomIdx) {
+        userRoomRelationService.findUserRoomRelationByRoomIdxAndUserIdx(roomIdx, requestUser.userIdx())
+                .resetUnreadMessageCount();
+    }
 }

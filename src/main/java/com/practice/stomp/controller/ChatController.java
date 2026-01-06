@@ -56,4 +56,13 @@ public class ChatController {
 
         return ResponseEntity.ok(chatAggregateService.getRoomMessages(requestUser, roomIdx, pageable));
     }
+
+    @PatchMapping("/{roomIdx}")
+    public ResponseEntity<Void> resetUnreadCount(@AuthenticationPrincipal CustomOAuth2User requestUser,
+                                                 @PathVariable @NotNull Long roomIdx) {
+
+        chatAggregateService.resetUnreadCount(requestUser, roomIdx);
+
+        return ResponseEntity.ok().build();
+    }
 }

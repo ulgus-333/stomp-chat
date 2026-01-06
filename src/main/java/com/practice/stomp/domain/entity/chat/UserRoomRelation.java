@@ -66,4 +66,8 @@ public class UserRoomRelation {
             this.unreadMessageCount++;
         }
     }
+
+    public void resetUnreadMessageCount() {
+        this.unreadMessageCount = 0;
+    }
 }
