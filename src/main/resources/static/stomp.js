@@ -7,8 +7,8 @@ let selectedUser = null;
 $(document).ready(function() {
     // Fetch user info first, then fetch chat rooms
     $.get("/user", function(data) {
-        userIdx = data.userIdx;
-        userNickname = data.nickname || data.name; // Use nickname, or name as fallback
+        userIdx = data.idx;
+        userNickname = data.nickName || data.name; // Use nickname, or name as fallback
         $("#userEmail").text(data.email);
         $("#userNickname").text(userNickname);
         fetchChatRoomsAndDisplay();
@@ -19,6 +19,12 @@ $(document).ready(function() {
 
     // Attach event listeners
     $("#send").on("click", sendMessage);
+    $("#message").on("keypress", function(e) {
+        if (e.which === 13) { // Enter key pressed
+            sendMessage();
+            return false; // Prevent default action (e.g., form submission)
+        }
+    });
     $("#hideChatBtn").on("click", backToInitialView);
     $("#leaveRoomBtn").on("click", backToInitialView);
     $("#backToInitialView").on("click", backToInitialView);
@@ -100,8 +106,8 @@ function searchUsers() {
                         .addClass("list-group-item list-group-item-action")
                         .attr("href", "#")
                         .data("user-idx", user.idx)
-                        .data("user-name", user.nickname || user.name)
-                        .text((user.nickname || user.name) + ' (' + user.email + ')');
+                        .data("user-name", user.nickName || user.name)
+                        .text((user.nickName || user.name) + ' (' + user.email + ')');
                     resultList.append(userItem);
                 });
                 resultsContainer.append(resultList);
@@ -168,12 +174,17 @@ function addRoomToList(room, roomListContainer) {
         .addClass("list-group-item list-group-item-action d-flex justify-content-between align-items-center")
         .attr("href", "#")
         .data("room-idx", room.idx)
-        .data("room-name", roomName);
+        .data("room-name", roomName)
+        .data("unread-count", room.unreadMessageCount); // Store unread count
 
     const titleAndParticipantsDiv = $("<div>");
     const titleH5 = $("<h5>").addClass("mb-1").text(roomTitle);
     if (room.unreadMessageCount > 0) {
-        titleH5.append($("<span>").addClass("badge badge-danger badge-pill ml-2").text(room.unreadMessageCount));
+        const badge = $("<span>")
+            .addClass("badge badge-danger badge-pill ml-2")
+            .attr("id", `badge-for-room-${room.idx}`) // Add unique ID
+            .text(room.unreadMessageCount);
+        titleH5.append(badge);
     }
     titleAndParticipantsDiv.append(titleH5);
     titleAndParticipantsDiv.append($("<small>").text(room.users.length + " participants"));
@@ -204,6 +215,7 @@ function connectToRoom(roomIdx, roomName) {
     if (stompClient) {
         stompClient.deactivate();
     }
+    $("#messages").empty();
 
     stompClient = new StompJs.Client({
         brokerURL: 'ws://' + window.location.host + '/stomp/chats',
@@ -212,11 +224,16 @@ function connectToRoom(roomIdx, roomName) {
             currentRoomIdx = roomIdx;
             $("#chatRoomName").text(roomName);
 
+            // Subscribe to the chat room
             stompClient.subscribe('/sub/chats/' + currentRoomIdx, (message) => {
                 showMessage(JSON.parse(message.body));
             });
 
+            // Fetch previous messages
             fetchPreviousMessages(currentRoomIdx);
+
+            // Reset unread message count
+            resetUnreadCount(currentRoomIdx);
 
             $("#roomListColumn").removeClass("col-md-12").addClass("col-md-3");
             $("#chatAreaColumn").show();
@@ -231,24 +248,42 @@ function connectToRoom(roomIdx, roomName) {
     stompClient.activate();
 }
 
+function resetUnreadCount(roomIdx) {
+    $.ajax({
+        url: "/chats/" + roomIdx,
+        type: "PATCH",
+        success: function() {
+            // Update the data attribute for consistency
+            const roomItem = $(`#chatRooms .list-group-item[data-room-idx="${roomIdx}"]`);
+            if (roomItem.length) {
+                roomItem.data("unread-count", 0);
+            }
+            
+            // Remove the badge using its unique ID
+            $(`#badge-for-room-${roomIdx}`).remove();
+        },
+        error: function(xhr, status, error) {
+            console.error("Failed to reset unread count:", error);
+        }
+    });
+}
+
 function fetchPreviousMessages(roomIdx) {
     const messagesContainer = $("#messages");
     messagesContainer.empty(); // Clear previous messages
 
-    // The API is not yet implemented, so this is a placeholder.
-    // When the API is ready, it should return a list of message objects.
-    $.get("/chats/messages", { roomIdx: roomIdx })
+    $.get(`/chats/${roomIdx}`)
         .done(function(response) {
-            // Assuming response is an array of message objects
-            if (response && Array.isArray(response)) {
-                response.forEach(function(message) {
+            if (response && response.messages && response.messages.content) {
+                // Messages are DESC, reverse to show oldest first
+                const messages = response.messages.content.reverse();
+                messages.forEach(function(message) {
                     showMessage(message);
                 });
             }
         })
         .fail(function() {
-            // You can add some error handling here if you want
-            console.log("Could not fetch previous messages. The API might not be ready yet.");
+            messagesContainer.append("<p>Could not fetch previous messages.</p>");
         });
 }
 
@@ -284,8 +319,25 @@ function sendMessage() {
 }
 
 function showMessage(message) {
-    const sender = message.senderNickname || 'Unknown';
-    const msg = message.message || '';
-    $("#messages").append("<div><strong>" + sender + ":</strong> " + msg + "</div>");
-    $("#messages").scrollTop($("#messages")[0].scrollHeight);
+    const messagesContainer = $("#messages");
+    const isMyMessage = message.user && message.user.idx === userIdx;
+
+    const alignment = isMyMessage ? 'right' : 'left';
+
+    const messageContainer = $("<div>").addClass(`message-container ${alignment}`);
+    const bubble = $("<div>").addClass(`message-bubble ${alignment}`);
+    const sender = $("<div>").addClass('sender-name');
+    const msg = $("<div>").text(message.message || '');
+
+    if (!isMyMessage) {
+        sender.text(message.user.nickName || message.user.name || 'Unknown');
+        bubble.append(sender);
+    }
+
+    bubble.append(msg);
+    messageContainer.append(bubble);
+    messagesContainer.append(messageContainer);
+
+    // Scroll to the bottom
+    messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
 }

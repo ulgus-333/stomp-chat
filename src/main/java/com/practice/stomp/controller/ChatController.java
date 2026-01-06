@@ -50,7 +50,7 @@ public class ChatController {
                                                                @PathVariable @NotNull Long roomIdx,
                                                                @PageableDefault(
                                                                        size = 30,
-                                                                       sort = "created_at",
+                                                                       sort = "createAt",
                                                                        direction = Sort.Direction.DESC
                                                                ) Pageable pageable) {
 

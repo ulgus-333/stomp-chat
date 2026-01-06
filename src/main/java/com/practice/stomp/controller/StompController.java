@@ -2,6 +2,7 @@ package com.practice.stomp.controller;
 
 import com.practice.stomp.domain.dto.CustomOAuth2User;
 import com.practice.stomp.domain.dto.MessagePayloadDto;
+import com.practice.stomp.domain.response.chat.MessageResponseDto;
 import com.practice.stomp.service.chat.ChatAggregateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -22,9 +23,9 @@ public class StompController {
 
     @MessageMapping("/chats/{roomIdx}")
     @SendTo("/sub/chats/{roomIdx}")
-    public MessagePayloadDto handleMessage(@AuthenticationPrincipal Principal principal,
-                                           @DestinationVariable Long roomIdx,
-                                           @Payload MessagePayloadDto messagePayloadDto) {
+    public MessageResponseDto handleMessage(@AuthenticationPrincipal Principal principal,
+                                            @DestinationVariable Long roomIdx,
+                                            @Payload MessagePayloadDto messagePayloadDto) {
         LocalDateTime messagedAt = LocalDateTime.now();
         CustomOAuth2User user = (CustomOAuth2User) ((OAuth2AuthenticationToken) principal).getPrincipal();
         return chatAggregateService.insertMessage(user, roomIdx, messagePayloadDto, messagedAt);
