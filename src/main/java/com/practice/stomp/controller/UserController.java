@@ -1,6 +1,7 @@
 package com.practice.stomp.controller;
 
 import com.practice.stomp.domain.dto.CustomOAuth2User;
+import com.practice.stomp.domain.request.user.UserProfileUpdateRequestDto;
 import com.practice.stomp.domain.request.user.UserSearchRequestDto;
 import com.practice.stomp.domain.response.user.UserDetailResponseDto;
 import com.practice.stomp.domain.response.user.UserDetailsResponseDto;
@@ -10,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -32,5 +30,14 @@ public class UserController {
                                                                    Pageable pageable) {
 
         return ResponseEntity.ok(userService.searchUserDetail(requestUser.userIdx(), requestDto, pageable));
+    }
+
+    @PatchMapping("/profile")
+    public ResponseEntity<Void> updateProfile(@AuthenticationPrincipal CustomOAuth2User requestUser,
+                                              @RequestBody @Valid UserProfileUpdateRequestDto requestDto) {
+
+        userService.updateUserProfile(requestUser, requestDto);
+
+        return ResponseEntity.ok().build();
     }
 }

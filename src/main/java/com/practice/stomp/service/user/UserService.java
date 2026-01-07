@@ -1,7 +1,9 @@
 package com.practice.stomp.service.user;
 
 import com.practice.stomp.domain.dao.user.UserSearchDao;
+import com.practice.stomp.domain.dto.CustomOAuth2User;
 import com.practice.stomp.domain.entity.user.User;
+import com.practice.stomp.domain.request.user.UserProfileUpdateRequestDto;
 import com.practice.stomp.domain.request.user.UserSearchRequestDto;
 import com.practice.stomp.domain.response.user.UserDetailResponseDto;
 import com.practice.stomp.domain.response.user.UserDetailsResponseDto;
@@ -35,5 +37,12 @@ public class UserService {
         UserSearchDao searchDao = requestDto.toDao(requestUserIdx, pageable);
         Page<User> searchUser = userQueryDslRepository.searchUserByDao(searchDao);
         return UserDetailsResponseDto.from(searchUser);
+    }
+
+    @Transactional
+    public void updateUserProfile(CustomOAuth2User requestUser, UserProfileUpdateRequestDto requestDto) {
+         User targetUser = userRepository.findById(requestUser.userIdx())
+                         .orElseThrow(() -> new HttpClientErrorException(HttpStatusCode.valueOf(404)));
+         targetUser.update(requestDto.toEntity());
     }
 }

@@ -27,10 +27,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         String email = (String) attributes.get("email");
 
         User user = userRepository.findByEmail(email)
-                .orElseGet(() -> {
-                    User newUser = userType.generateUser(attributes);
-                    return userRepository.save(newUser);
-                });
+                .orElseGet(() -> userRepository.save(userType.generateUser(attributes)));
 
         return CustomOAuth2User.of(user, attributes);
     }
