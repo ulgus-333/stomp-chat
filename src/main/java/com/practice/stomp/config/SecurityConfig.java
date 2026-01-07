@@ -21,6 +21,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth -> oauth.userInfoEndpoint(c -> c.userService(oAuth2UserService)))
+                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login"))
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }

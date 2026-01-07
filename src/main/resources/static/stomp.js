@@ -29,7 +29,9 @@ $(document).ready(function() {
     $("#leaveRoomBtn").on("click", backToInitialView);
     $("#backToInitialView").on("click", backToInitialView);
     $("#createRoomBtn").on("click", createRoom);
-    $("#logoutBtn").on("click", () => { window.location.href = "/logout"; });
+    $("#logoutBtn").on("click", () => {
+        $("#logoutForm").submit();
+    });
     $("#myPageBtn").on("click", () => { window.location.href = "/mypage.html"; });
 
     // Modal-related event listeners
