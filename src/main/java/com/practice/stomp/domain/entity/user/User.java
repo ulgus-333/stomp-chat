@@ -38,6 +38,12 @@ public class User {
                 .build();
     }
 
+    public static User update(String nickname) {
+        return User.builder()
+                .nickname(nickname)
+                .build();
+    }
+
     @Builder(access = AccessLevel.PRIVATE)
     public User(Long idx, String email, String name, String nickname, Role role) {
         this.idx = idx;
@@ -53,5 +59,9 @@ public class User {
 
     public String decryptName() {
         return CipherUtils.decrypt(this.name);
+    }
+
+    public void update(User user) {
+        this.nickname = user.nickname;
     }
 }

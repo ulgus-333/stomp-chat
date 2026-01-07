@@ -30,7 +30,7 @@ $(document).ready(function() {
     $("#backToInitialView").on("click", backToInitialView);
     $("#createRoomBtn").on("click", createRoom);
     $("#logoutBtn").on("click", () => { window.location.href = "/logout"; });
-    $("#myPageBtn").on("click", () => { window.location.href = "/mypage"; });
+    $("#myPageBtn").on("click", () => { window.location.href = "/mypage.html"; });
 
     // Modal-related event listeners
     $("#user-search-btn").on("click", searchUsers);
