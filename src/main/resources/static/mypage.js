@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
             nicknameInput.value = data.nickName;
-            if (data.profileImageUrl) {
-                profileImagePreview.src = data.profileImageUrl;
-                profileImagePath = data.profileImageUrl;
+            if (data.profileImage) {
+                profileImagePreview.src = data.profileImage;
+                profileImagePath = data.profileImage;
             } else {
                 // You can set a default placeholder image if you have one
                 profileImagePreview.src = 'https://via.placeholder.com/200';
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
             
             // Step 3: Update UI and store the image path
             profileImagePreview.src = URL.createObjectURL(file); // Show a preview of the selected image
-            profileImagePath = presignedData.fileName; // This is the path to be saved
+            profileImagePath = presignedData.parUrl; // This is the path to be saved
             alert('Image ready to be saved with your profile.');
 
         } catch (error) {

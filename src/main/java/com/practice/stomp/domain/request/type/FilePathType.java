@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum FilePathType {
-    PROFILE("user/profiles/%s"),
+    PROFILE("user/profiles/%s/"),
     ;
 
     private final String pathFormat;

@@ -26,7 +26,7 @@ public class FileService {
         CreatePreauthenticatedRequestDetails details = CreatePreauthenticatedRequestDetails.builder()
                 .name("par-" + UUID.randomUUID())
                 .objectName(requestDto.generateFilePath(String.valueOf(requestUser.userIdx())))
-                .accessType(CreatePreauthenticatedRequestDetails.AccessType.ObjectWrite)
+                .accessType(CreatePreauthenticatedRequestDetails.AccessType.ObjectReadWrite)
                 .timeExpires(expiresAt)
                 .build();
 

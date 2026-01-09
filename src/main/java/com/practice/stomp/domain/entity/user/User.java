@@ -33,10 +33,11 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    public static User insert(String email, String name) {
+    public static User insert(String email, String name, String profileImage) {
         return User.builder()
                 .email(email)
                 .name(CipherUtils.encrypt(name))
+                .profileImage(profileImage)
                 .role(Role.USER)
                 .build();
     }

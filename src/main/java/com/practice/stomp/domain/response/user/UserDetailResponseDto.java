@@ -6,14 +6,16 @@ public record UserDetailResponseDto (
         Long idx,
         String email,
         String name,
-        String nickName
+        String nickName,
+        String profileImage
 ) {
     public static UserDetailResponseDto from(User user) {
         return new UserDetailResponseDto(
                 user.getIdx(),
                 user.getEmail(),
                 user.decryptName(),
-                user.getNickname()
+                user.getNickname(),
+                user.getProfileImage()
         );
     }
 }
