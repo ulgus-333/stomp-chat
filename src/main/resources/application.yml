@@ -23,3 +23,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 cipher:
   seed: ${CIPHER_SEED}
+oci:
+  namespace: ${OCI_NAMESPACE}
+  region: ap-chuncheon-1
+  bucket: chat
