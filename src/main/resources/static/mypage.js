@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const profileImageUpload = document.getElementById('profile-image-upload');
 
     let profileImagePath = '';
+    let uploadedFileName = ''; 
 
     // Fetch current user's data and display it
     fetch('/user')
@@ -50,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function () {
             presignedData = await response.json();
         } catch (error) {
             console.error('Error getting pre-signed URL:', error);
-            alert('Could not prepare image for upload.');
             return;
         }
 
@@ -71,11 +71,10 @@ document.addEventListener('DOMContentLoaded', function () {
             // Step 3: Update UI and store the image path
             profileImagePreview.src = URL.createObjectURL(file); // Show a preview of the selected image
             profileImagePath = presignedData.parUrl; // This is the path to be saved
-            alert('Image ready to be saved with your profile.');
+            uploadedFileName = file.name;
 
         } catch (error) {
             console.error('Error uploading file to OCI:', error);
-            alert('Image upload failed.');
         }
     }
 
@@ -83,28 +82,34 @@ document.addEventListener('DOMContentLoaded', function () {
     // Handle profile update
     updateProfileButton.addEventListener('click', function () {
         const newNickname = nicknameInput.value;
-        if (newNickname) {
-            const payload = {
-                nickname: newNickname,
-                profileImageUrl: profileImagePath
-            };
+        const payload = {
+            ...(newNickname && {nickname: newNickname}),
+            profileImageUrl: profileImagePath
+        };
 
-            fetch('/user/profile', {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('Profile updated successfully!');
-                    window.location.href = "/index.html";
+        fetch('/user/profile', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        })
+        .then(response => {
+            if (response.ok) {
+                if (uploadedFileName) {
+                    fetch(`/files/presigned/expire?pathType=PROFILE&filename=${uploadedFileName}`, {
+                        method: 'DELETE'
+                    })
+                    .finally(() => {
+                        window.location.href = "/index.html";
+                    });
                 } else {
-                    alert('Failed to update profile.');
+                    window.location.href = "/index.html";
                 }
-            })
-            .catch(error => console.error('Error updating profile:', error));
-        }
+            } else {
+                console.error('Failed to update profile.');
+            }
+        })
+        .catch(error => console.error('Error updating profile:', error));
     });
 });
