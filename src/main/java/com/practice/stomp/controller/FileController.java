@@ -1,7 +1,7 @@
 package com.practice.stomp.controller;
 
 import com.practice.stomp.domain.dto.CustomOAuth2User;
-import com.practice.stomp.domain.request.file.PARGenerateRequestDto;
+import com.practice.stomp.domain.request.file.PARRequestDto;
 import com.practice.stomp.domain.response.file.FileResponseDto;
 import com.practice.stomp.service.infra.FileService;
 import jakarta.validation.Valid;
@@ -18,7 +18,16 @@ public class FileController {
 
     @PostMapping("/presigned")
     public ResponseEntity<FileResponseDto> generatePresignedUrl(@AuthenticationPrincipal CustomOAuth2User requestUser,
-                                                                @RequestBody @Valid PARGenerateRequestDto requestDto) {
+                                                                @RequestBody @Valid PARRequestDto requestDto) {
         return ResponseEntity.ok(fileService.generatePARUrl(requestUser, requestDto));
+    }
+
+    @DeleteMapping("/presigned/expire")
+    public ResponseEntity<Void> expirePAR(@AuthenticationPrincipal CustomOAuth2User requestUser,
+                                          @ModelAttribute @Valid PARRequestDto requestDto) {
+
+        fileService.expireRemainPAR(requestUser, requestDto);
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -17,10 +17,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/login", "/oauth2/**", "/error", "/index.html", "/mypage.html", "/main.css", "/stomp.js", "/mypage.js").permitAll()
+                        .requestMatchers("/login", "/oauth2/**", "/error", "/main.css", "/stomp.js", "/mypage.js").permitAll()
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(oauth -> oauth.userInfoEndpoint(c -> c.userService(oAuth2UserService)))
+                .oauth2Login(oauth -> oauth
+                        .userInfoEndpoint(c -> c.userService(oAuth2UserService))
+                        .defaultSuccessUrl("/", true))
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login"))
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();

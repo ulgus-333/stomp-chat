@@ -21,6 +21,13 @@ spring:
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+redis:
+  host: 127.0.0.1
+  port: 6379
+  timeout: # ms
+    connection: 3000
+    command: 3000
+    shutdown: 1000
 cipher:
   seed: ${CIPHER_SEED}
 oci:
