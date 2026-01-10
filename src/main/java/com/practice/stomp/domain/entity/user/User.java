@@ -26,30 +26,36 @@ public class User {
     @Column(length = 50)
     private String nickname;
 
+    @Column
+    private String profileImage;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    public static User insert(String email, String name) {
+    public static User insert(String email, String name, String profileImage) {
         return User.builder()
                 .email(email)
                 .name(CipherUtils.encrypt(name))
+                .profileImage(profileImage)
                 .role(Role.USER)
                 .build();
     }
 
-    public static User update(String nickname) {
+    public static User update(String nickname, String profileImage) {
         return User.builder()
                 .nickname(nickname)
+                .profileImage(profileImage)
                 .build();
     }
 
     @Builder(access = AccessLevel.PRIVATE)
-    public User(Long idx, String email, String name, String nickname, Role role) {
+    public User(Long idx, String email, String name, String nickname, String profileImage, Role role) {
         this.idx = idx;
         this.email = email;
         this.name = name;
         this.nickname = nickname;
+        this.profileImage = profileImage;
         this.role = role;
     }
 
@@ -63,5 +69,6 @@ public class User {
 
     public void update(User user) {
         this.nickname = user.nickname;
+        this.profileImage = user.profileImage;
     }
 }
