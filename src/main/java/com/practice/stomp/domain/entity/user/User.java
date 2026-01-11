@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 @Getter
 @Table(name = "user")
@@ -45,9 +46,12 @@ public class User {
     }
 
     public static User update(String nickname, String profileImage) {
+        String validProfileImage = StringUtils.hasLength(profileImage)
+                ? profileImage
+                : DEFAULT_PROFILE;
         return User.builder()
                 .nickname(nickname)
-                .profileImage(profileImage)
+                .profileImage(validProfileImage)
                 .build();
     }
 

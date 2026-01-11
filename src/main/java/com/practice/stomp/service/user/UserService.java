@@ -60,6 +60,11 @@ public class UserService {
     public void updateUserProfile(CustomOAuth2User requestUser, UserProfileUpdateRequestDto requestDto) {
          User targetUser = userRepository.findById(requestUser.userIdx())
                          .orElseThrow(() -> new HttpClientErrorException(HttpStatusCode.valueOf(404)));
+         if (!targetUser.getProfileImage().equals(requestDto.profileImageUrl())) {
+             String cacheKey = CacheKey.OCI_USER_READ_KEY.generateKey(String.valueOf(requestUser.userIdx()), FilePathType.PROFILE.name());
+             cacheService.delete(cacheKey);
+             fileService.deleteFile(targetUser.getProfileImage());
+         }
          targetUser.update(requestDto.toEntity());
     }
 }

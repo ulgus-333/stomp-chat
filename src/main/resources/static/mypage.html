@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My Page</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="/main.css">
@@ -16,20 +17,28 @@
 </nav>
 <div class="container">
     <div class="row">
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">My Page</h3>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body form-horizontal">
                     <div class="form-group">
-                        <label for="profile-image">Profile Image:</label>
-                        <img id="profile-image-preview" src="" alt="Profile Image" class="img-thumbnail" width="200">
-                        <input type="file" id="profile-image-upload" class="form-control">
+                        <label class="col-sm-3 control-label">Profile Image:</label>
+                        <div class="col-sm-9">
+                            <img id="profile-image-preview" src="" alt="Profile Image" class="img-thumbnail" width="80px" height="80px" style="margin-bottom: 10px;">
+                            <div class="file-upload-wrapper" style="display: inline-block; vertical-align: middle;">
+                                <input type="file" id="profile-image-upload" class="file-upload-input">
+                                <label for="profile-image-upload" class="file-upload-button">Upload Image</label>
+                            </div>
+                            <button type="button" id="reset-image-button" class="btn btn-sm btn-default" style="margin-top: 10px;">초기화</button>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="nickname">Nickname:</label>
-                        <input type="text" id="nickname" class="form-control">
+                        <label for="nickname" class="col-sm-3 control-label">Nickname:</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="nickname" class="form-control">
+                        </div>
                     </div>
                 </div>
                 <div class="panel-footer text-right">
