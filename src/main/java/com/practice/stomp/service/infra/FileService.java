@@ -3,6 +3,7 @@ package com.practice.stomp.service.infra;
 import com.oracle.bmc.objectstorage.ObjectStorage;
 import com.oracle.bmc.objectstorage.model.CreatePreauthenticatedRequestDetails;
 import com.oracle.bmc.objectstorage.requests.CreatePreauthenticatedRequestRequest;
+import com.oracle.bmc.objectstorage.requests.DeleteObjectRequest;
 import com.oracle.bmc.objectstorage.requests.DeletePreauthenticatedRequestRequest;
 import com.oracle.bmc.objectstorage.responses.CreatePreauthenticatedRequestResponse;
 import com.practice.stomp.config.properties.OciProperties;
@@ -78,5 +79,15 @@ public class FileService {
                 .build();
 
         return objectStorage.createPreauthenticatedRequest(request);
+    }
+
+    public void deleteFile(String filePath) {
+        DeleteObjectRequest request = DeleteObjectRequest.builder()
+                .namespaceName(ociProperties.getNamespace())
+                .bucketName(ociProperties.getBucket())
+                .objectName(filePath)
+                .build();
+
+        objectStorage.deleteObject(request);
     }
 }

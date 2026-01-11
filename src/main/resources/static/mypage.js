@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const updateProfileButton = document.getElementById('update-profile');
     const profileImagePreview = document.getElementById('profile-image-preview');
     const profileImageUpload = document.getElementById('profile-image-upload');
+    const resetImageButton = document.getElementById('reset-image-button');
 
     let profileImagePath = '';
     let uploadedFileName = ''; 
@@ -17,10 +18,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 profileImagePath = data.profileImage;
             } else {
                 // You can set a default placeholder image if you have one
-                profileImagePreview.src = 'https://via.placeholder.com/200';
+                profileImagePreview.src = '';
             }
         })
         .catch(error => console.error('Error fetching user data:', error));
+
+    // Handle image reset
+    resetImageButton.addEventListener('click', function () {
+        profileImageUpload.value = null; // Clear the file input
+        profileImagePreview.src = '/default_profile.png'; // Reset to default profile image
+        profileImagePath = null; // Set the path to null
+    });
 
     // Handle file selection
     profileImageUpload.addEventListener('change', function () {

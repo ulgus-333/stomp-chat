@@ -1,3 +1,7 @@
+body {
+    color: #333;
+}
+
 .message-bubble {
     display: inline-block;
     max-width: 80%;
@@ -28,4 +32,59 @@
     font-size: 12px;
     color: #888;
     margin-bottom: 5px;
+}
+
+/* Custom file upload button styles for mypage.html */
+.file-upload-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: block;
+}
+
+.file-upload-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-upload-button {
+    background-color: rgba(241, 243, 224, 0.8);
+    color: #333; /* Dark text for readability on light button */
+    padding: 8px 12px;
+    border-radius: 5px; /* Low radius rounded rectangle */
+    cursor: pointer;
+    display: inline-block;
+    border: none; /* Remove default button border */
+}
+
+/* Ensure the button looks clickable */
+.file-upload-button:hover {
+    background-color: rgba(225, 227, 212, 0.8); /* Slightly darker on hover */
+}
+
+/* Highlight Color Overrides */
+.panel-default > .panel-heading {
+    background-color: rgba(210, 220, 182, 0.8);
+    border-color: rgba(201, 210, 179, 0.8);
+    color: #333;
+}
+
+.navbar-default {
+    background-color: rgba(210, 220, 182, 0.8);
+    border-color: rgba(201, 210, 179, 0.8);
+}
+
+/* Adjust navbar link colors for readability */
+.navbar-default .navbar-brand,
+.navbar-default .navbar-nav > li > a {
+    color: #333;
+}
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-nav > li > a:hover {
+    color: #000;
+}
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #333;
 }
