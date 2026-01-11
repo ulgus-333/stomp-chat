@@ -4,6 +4,7 @@ import java.time.Duration;
 
 public enum CacheKey {
     OCI_PAR_KEY(CacheKeyPrefix.OCI, "PAR::%s::%s", 2, Duration.ofMinutes(5L)),
+    OCI_USER_READ_KEY(CacheKeyPrefix.OCI, "PAR::READ::%s::%s", 2, Duration.ofDays(1)),
     ;
 
     private final CacheKeyPrefix prefix;

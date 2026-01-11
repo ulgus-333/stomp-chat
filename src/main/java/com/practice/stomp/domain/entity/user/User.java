@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 public class User {
+    private static final String DEFAULT_PROFILE = "user/profiles/default/default_profile.png";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
@@ -33,11 +35,11 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    public static User insert(String email, String name, String profileImage) {
+    public static User insert(String email, String name) {
         return User.builder()
                 .email(email)
                 .name(CipherUtils.encrypt(name))
-                .profileImage(profileImage)
+                .profileImage(DEFAULT_PROFILE)
                 .role(Role.USER)
                 .build();
     }

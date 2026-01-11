@@ -9,13 +9,23 @@ public record UserDetailResponseDto (
         String nickName,
         String profileImage
 ) {
+    public static UserDetailResponseDto from(User user, String profileImagePar) {
+        return new UserDetailResponseDto(
+                user.getIdx(),
+                user.getEmail(),
+                user.decryptName(),
+                user.getNickname(),
+                profileImagePar
+        );
+    }
+
     public static UserDetailResponseDto from(User user) {
         return new UserDetailResponseDto(
                 user.getIdx(),
                 user.getEmail(),
                 user.decryptName(),
                 user.getNickname(),
-                user.getProfileImage()
+                null
         );
     }
 }

@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
             
             // Step 3: Update UI and store the image path
             profileImagePreview.src = URL.createObjectURL(file); // Show a preview of the selected image
-            profileImagePath = presignedData.parUrl; // This is the path to be saved
+            profileImagePath = presignedData.filePath; // This is the path to be saved
             uploadedFileName = file.name;
 
         } catch (error) {
