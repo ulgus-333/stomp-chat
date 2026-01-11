@@ -12,7 +12,8 @@ import java.time.Duration;
 @Component
 @ConfigurationProperties(prefix = "oci")
 public class OciProperties {
-    public static Duration EXPIRE_DURATION = Duration.ofMinutes(5);
+    public static Duration WRITE_EXPIRE_DURATION = Duration.ofMinutes(5);
+    public static Duration READ_EXPIRE_DURATION = Duration.ofDays(1);
     private static String URL_PREFIX = "https://objectstorage.%s.oraclecloud.com%s";
 
     private String namespace;

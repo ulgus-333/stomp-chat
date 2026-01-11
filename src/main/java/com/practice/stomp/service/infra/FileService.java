@@ -27,28 +27,17 @@ public class FileService {
     private final RedisCacheService cacheService;
 
     public FileResponseDto generatePARUrl(CustomOAuth2User requestUser, PARRequestDto requestDto) {
-        Date expiresAt = Date.from(Instant.now().plus(OciProperties.EXPIRE_DURATION));
-        CreatePreauthenticatedRequestDetails details = CreatePreauthenticatedRequestDetails.builder()
-                .name("par-" + UUID.randomUUID())
-                .objectName(requestDto.generateFilePath(String.valueOf(requestUser.userIdx())))
-                .accessType(CreatePreauthenticatedRequestDetails.AccessType.ObjectWrite)
-                .timeExpires(expiresAt)
-                .build();
+        Date expiresAt = Date.from(Instant.now().plus(OciProperties.WRITE_EXPIRE_DURATION));
+        String filePath = requestDto.generateFilePath(String.valueOf(requestUser.userIdx()));
 
-        CreatePreauthenticatedRequestRequest request = CreatePreauthenticatedRequestRequest.builder()
-                .namespaceName(ociProperties.getNamespace())
-                .bucketName(ociProperties.getBucket())
-                .createPreauthenticatedRequestDetails(details)
-                .build();
-
-        CreatePreauthenticatedRequestResponse response = objectStorage.createPreauthenticatedRequest(request);
+        CreatePreauthenticatedRequestResponse response = generatePar(filePath, CreatePreauthenticatedRequestDetails.AccessType.ObjectWrite, expiresAt);
 
         String parUrl = ociProperties.preAuthenticatedRequestUrl(response.getPreauthenticatedRequest().getAccessUri());
 
         String cacheKey = CacheKey.OCI_PAR_KEY.generateKey(requestDto.pathType().name(), String.valueOf(requestUser.userIdx()));
         cacheService.set(cacheKey, PARCacheDto.from(response.getPreauthenticatedRequest()), CacheKey.OCI_PAR_KEY.expire());
 
-        return new FileResponseDto(parUrl, requestDto.filename());
+        return new FileResponseDto(parUrl, filePath, requestDto.filename());
     }
 
     public void expireRemainPAR(CustomOAuth2User requestUser, PARRequestDto requestDto) {
@@ -65,5 +54,29 @@ public class FileService {
                     objectStorage.deletePreauthenticatedRequest(request);
                     cacheService.delete(cacheKey);
                 });
+    }
+
+    public String generateParReadUrl(String filePath) {
+        Date expiresAt = Date.from(Instant.now().plus(OciProperties.READ_EXPIRE_DURATION));
+        CreatePreauthenticatedRequestResponse response = generatePar(filePath, CreatePreauthenticatedRequestDetails.AccessType.ObjectRead, expiresAt);
+
+        return ociProperties.preAuthenticatedRequestUrl(response.getPreauthenticatedRequest().getAccessUri());
+    }
+
+    private CreatePreauthenticatedRequestResponse generatePar(String filePath, CreatePreauthenticatedRequestDetails.AccessType accessType, Date expireAt) {
+        CreatePreauthenticatedRequestDetails details = CreatePreauthenticatedRequestDetails.builder()
+                .name("par-" + UUID.randomUUID())
+                .objectName(filePath)
+                .accessType(accessType)
+                .timeExpires(expireAt)
+                .build();
+
+        CreatePreauthenticatedRequestRequest request = CreatePreauthenticatedRequestRequest.builder()
+                .namespaceName(ociProperties.getNamespace())
+                .bucketName(ociProperties.getBucket())
+                .createPreauthenticatedRequestDetails(details)
+                .build();
+
+        return objectStorage.createPreauthenticatedRequest(request);
     }
 }

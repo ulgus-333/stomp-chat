@@ -17,7 +17,7 @@ public record MessageResponseDto (
         return new MessageResponseDto(
                 message.getIdx(),
                 MessageResponseType.TEXT,
-                UserDetailResponseDto.from(message.getUser()),
+                UserDetailResponseDto.from(message.getUser(), null),
                 message.getMessage(),
                 message.getCreateAt()
         );
